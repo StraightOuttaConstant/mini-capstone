@@ -20,8 +20,10 @@ class ProductsController < ApplicationController
                           name: params[:name],
                           description: params[:description],
                           price: params[:price],
-                          image_url: params[:image_url]
+                          image_url: params[:image_url],
+                          supplier_id: params[:supplier_id]
                           )
+    
     if @product.save
       render 'show.json.jbuilder'
     else
