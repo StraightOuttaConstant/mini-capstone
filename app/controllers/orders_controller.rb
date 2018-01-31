@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   def index
-    @orders = Order.all
+    @orders = current_user.orders
     render 'index.json.jbuilder'
   end
 
@@ -10,7 +10,7 @@ class OrdersController < ApplicationController
     total = tax + subtotal
 
     @order = Order.new(
-                      user_id: 1,
+                      user_id: current_user.id,
                       product_id: params[:product_id],
                       quantity: params[:quantity],
                       subtotal: subtotal,
