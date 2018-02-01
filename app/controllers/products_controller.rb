@@ -16,18 +16,21 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(
-                          name: params[:name],
-                          description: params[:description],
-                          price: params[:price],
-                          image_url: params[:image_url],
-                          supplier_id: params[:supplier_id]
-                          )
-    
-    if @product.save
-      render 'show.json.jbuilder'
+    if current_user && current_user.admin
+      @product = Product.new(
+                            name: params[:name],
+                            description: params[:description],
+                            price: params[:price],
+                            supplier_id: params[:supplier_id]
+                            )
+      
+      if @product.save
+        render 'show.json.jbuilder'
+      else
+        render json: {errors: @product.errors.full_messages}, status: :unprocessable_entity
+      end
     else
-      render json: {errors: @product.errors.full_messages}, status: :unprocessable_entity
+      render json: {message: "you are not authorized"}, status: :unauthorized
     end
   end
 
