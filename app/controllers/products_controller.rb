@@ -40,23 +40,31 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product = Product.find(params[:id])
-    
-    @product.name = params[:name] || @product.name
-    @product.description = params[:description] || @product.description
-    @product.price = params[:price] || @product.price
-    @product.image_url = params[:image_url] || @product.image_url
-    
-    if @product.save
-      render 'show.json.jbuilder'
+    if current_user && current_user.admin
+      @product = Product.find(params[:id])
+      
+      @product.name = params[:name] || @product.name
+      @product.description = params[:description] || @product.description
+      @product.price = params[:price] || @product.price
+      @product.supplier_id = params[:supplier_id] || @product.supplier_id
+      
+      if @product.save
+        render 'show.json.jbuilder'
+      else
+        render json: {message: @product.errors.full_messages}, status: :unprocessable_entity
+      end
     else
-      render json: {message: @product.errors.full_messages}, status: :unprocessable_entity
+      render json: {message: "you are not authorized"}, status: :unauthorized
     end
   end
 
   def destroy
-    product = Product.find(params[:id])
-    product.destroy
-    render json: {message: "Successfully destroyed product ##{product.id}"}
+    if current_user && current_user.admin
+      product = Product.find(params[:id])
+      product.destroy
+      render json: {message: "Successfully destroyed product ##{product.id}"}
+    else
+      render json: {message: "you are not authorized"}, status: :unauthorized
+    end
   end
 end
