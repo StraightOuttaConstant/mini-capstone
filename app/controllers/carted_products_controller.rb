@@ -1,7 +1,6 @@
 class CartedProductsController < ApplicationController
   def index
-    # @carted_products = CartedProduct.where(status: "carted", user_id: current_user.id)
-    @carted_products = current_user.carted_products.where(status: "carted")
+    @carted_products = current_user.cart
     render 'index.json.jbuilder'
   end
 
@@ -15,4 +14,23 @@ class CartedProductsController < ApplicationController
     @carted_product.save
     render 'show.json.jbuilder'
   end
+
+  def destroy
+    carted_product = CartedProduct.find(params[:id])
+    carted_product.update(status: "removed")
+    render json: {message: "Product removed from cart"}
+  end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
